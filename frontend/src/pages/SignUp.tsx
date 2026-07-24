@@ -1,5 +1,6 @@
+import type {JSX} from 'react'
 
-const SignUp = () => {
+const SignUp = ():JSX.Element => {
   return (
     <div>SignUp</div>
   )
