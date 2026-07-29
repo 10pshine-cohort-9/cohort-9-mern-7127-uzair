@@ -24,7 +24,7 @@ const signup = async (req,res) => {
         const hashPassword = await bcrypt.hash(password,10);
         const user = await User.create({name,email,password:hashPassword});
 
-        const token = jwt.sign({ id: user._id },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES_IN || "7d",});
+        const token = jwt.sign({ id: user._id },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES_IN || "7d"});
 
         return res.status(201).json({
             message: "User registered successfully",
@@ -56,7 +56,7 @@ const login = async (req,res) => {
 
         const user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({
+            return res.status(401).json({
                 message:"Invalid Credentials"
             });
         }
@@ -64,12 +64,12 @@ const login = async (req,res) => {
         const isPassValid = await bcrypt.compare(password, user.password);
 
         if(!isPassValid){
-            return res.status(500).json({
+            return res.status(401).json({
                 message: "Invalid Credentials"
             });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d"});
 
         return res.status(200).json({
             message: "Login Successful! Redirecting....",
