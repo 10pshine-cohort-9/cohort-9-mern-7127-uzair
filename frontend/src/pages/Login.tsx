@@ -28,6 +28,7 @@ const Login = ():JSX.Element => {
         throw new Error(data.message);
       }
 
+      localStorage.setItem('token', data.token);
       navigate('/dashboard');
 
     } catch (error) {
@@ -53,7 +54,7 @@ const Login = ():JSX.Element => {
         <div className="w-full md:w-1/2 flex items-center justify-center px-8 py-12 bg-white overflow-y-auto">
           <AuthCard
             title="Welcome back"
-            subtitle="Log in to continue to Marginal"
+            subtitle="Log in to continue to Notify"
             footer={
               <>
                 Don't have an account? <Link to="/signup" className="text-[#C0453A] font-medium">Sign up</Link>

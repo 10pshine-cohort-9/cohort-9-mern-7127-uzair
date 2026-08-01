@@ -27,6 +27,7 @@ const SignUp = ():JSX.Element => {
         throw new Error(data.message);
       }
 
+      localStorage.setItem('token', data.token);
       navigate('/dashboard');
       
     } catch (error) {
