@@ -1,39 +1,23 @@
 import type { JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { NotebookPen } from 'lucide-react'
-
-type Note = {
-  _id: string
-  title: string
-  content: string
-  createdAt: string
-  updatedAt: string
-}
+import { NotebookPen, Trash2, LogOut } from 'lucide-react'
+import { getNotes } from '../services/noteService'
+import type { Note } from '../components/NoteCard'
+import NoteCard from '../components/NoteCard'
 
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = useState<Note[]>([])
   const [error, setError] = useState('')
+  const [selectedNote, setSelectedNote] = useState<Note>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const token = localStorage.getItem('token')
-
-        const response = await fetch('http://localhost:5000/notes', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.message)
-        }
-
-        setNotes(data)
+        const token = localStorage.getItem('token');
+        const data = await getNotes(token); 
+        setNotes(data);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Failed to load Notes!')
       }
@@ -48,45 +32,72 @@ const Dashboard = (): JSX.Element => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-[#1D2939] text-white px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <NotebookPen size={28} />
-          <span className="text-2xl font-bold">Notify</span>
+    <div className="min-h-screen flex bg-white">
+      <div className="w-16 md:w-56 bg-[#1D2939] text-white flex flex-col py-6 px-3">
+        <div className="flex items-center gap-2 px-2 mb-8">
+          <NotebookPen size={24} />
+          <span className="hidden md:inline text-lg font-bold">Notify</span>
         </div>
+ 
+        <nav className="flex flex-col gap-1">
+          <button className="flex items-center gap-2 px-2 py-2 rounded-md bg-[#C0453A] text-sm font-medium">
+            <NotebookPen size={16} />
+            <span className="hidden md:inline">Notes</span>
+          </button>
+          <button className="flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10">
+            <Trash2 size={16} />
+            <span className="hidden md:inline">Trash</span>
+          </button>
+        </nav>
+ 
         <button
           onClick={handleLogout}
-          className="text-sm bg-[#C0453A] px-4 py-2 rounded-md hover:opacity-90 transition"
+          className="mt-auto flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10"
         >
-          Log out
+          <LogOut size={16} />
+          <span className="hidden md:inline">Log out</span>
         </button>
       </div>
 
-      <div className="max-w-5xl mx-auto px-8 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-[#1D2939]">Your notes</h1>
-          <button className="bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition">
-            + New note
+      <div className="w-full md:w-80 border-r border-gray-200 bg-[#FAF6EC] flex flex-col">
+        <div className="flex items-center justify-between px-5 py-5">
+          <h1 className="text-xl font-semibold text-[#1D2939]">Notes</h1>
+          <button className="bg-[#C0453A] text-white text-xs font-medium px-3 py-1.5 rounded-md hover:opacity-90 transition">
+            + New
           </button>
         </div>
-
-        {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-
+ 
+        {error && <p className="text-sm text-red-600 px-5">{error}</p>}
         {notes.length === 0 && !error && (
-          <p className="text-sm text-gray-500">You don't have any notes yet.</p>
+          <p className="text-sm text-gray-500 px-5">You don't have any notes yet.</p>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+ 
+        <div className="flex-1 overflow-y-auto px-3 space-y-2 pb-4">
           {notes.map((note) => (
-            <div key={note._id} className="bg-[#FAF6EC] rounded-lg shadow-md p-5">
-              <h2 className="text-lg font-semibold text-[#1D2939] mb-2">{note.title}</h2>
-              <p className="text-sm text-gray-600 mb-3">{note.content}</p>
-              <p className="text-xs text-gray-400">
-                Updated {new Date(note.updatedAt).toLocaleDateString()}
-              </p>
-            </div>
+            <NoteCard
+              key={note._id}
+              note={note}
+              isSelected={selectedNote?._id === note._id}
+              onClick={() => setSelectedNote(note)}
+            />
           ))}
         </div>
+      </div>
+ 
+      <div className="hidden md:flex flex-1 flex-col px-12 py-10">
+        {selectedNote ? (
+          <>
+            <h1 className="text-3xl font-bold text-[#1D2939] mb-2">{selectedNote.title}</h1>
+            <p className="text-xs text-gray-400 mb-6">
+              Last updated {new Date(selectedNote.updatedAt).toLocaleString()}
+            </p>
+            <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {selectedNote.content}
+            </p>
+          </>
+        ) : (
+          <p className="text-gray-400">Select a note to see it here</p>
+        )}
       </div>
     </div>
   )
