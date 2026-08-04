@@ -54,7 +54,7 @@ const signup = async (name:string, email:string, password:string) : Promise<Auth
     }
 }
 
-const logout = async () => {
+const logout = async () : Promise<void> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
             method: 'POST',
