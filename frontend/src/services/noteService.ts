@@ -1,4 +1,6 @@
-const getNotes = async (token: string | null) => {
+import type { Note } from "../components/NoteCard";
+
+const getNotes = async (token: string) : Promise<Note[]>=> {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
             method: 'GET',
@@ -15,8 +17,8 @@ const getNotes = async (token: string | null) => {
 
     return data
     } catch (error) {
-        throw error instanceof Error ? error.message : new Error("Something went wrong!");
-    };
+        throw error instanceof Error ? error : new Error("Something went wrong!");
+    }
 }
 
 export { getNotes };

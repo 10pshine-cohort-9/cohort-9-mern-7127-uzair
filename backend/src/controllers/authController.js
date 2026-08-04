@@ -56,7 +56,7 @@ const login = async (req,res) => {
 
         const user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({
+            return res.status(401).json({
                 message:"Invalid Credentials"
             });
         }
@@ -64,7 +64,7 @@ const login = async (req,res) => {
         const isPassValid = await bcrypt.compare(password, user.password);
 
         if(!isPassValid){
-            return res.status(400).json({
+            return res.status(401).json({
                 message: "Invalid Credentials"
             });
         }

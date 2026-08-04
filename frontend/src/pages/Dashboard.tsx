@@ -9,7 +9,7 @@ import NoteCard from '../components/NoteCard'
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = useState<Note[]>([])
   const [error, setError] = useState('')
-  const [selectedNote, setSelectedNote] = useState<Note>(null)
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
