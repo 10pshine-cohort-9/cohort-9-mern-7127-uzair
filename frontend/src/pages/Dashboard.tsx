@@ -16,6 +16,12 @@ const Dashboard = (): JSX.Element => {
     const fetchNotes = async () => {
       try {
         const token = localStorage.getItem('token');
+
+        if(!token){
+          navigate('/login');
+          return;
+        }
+
         const data = await getNotes(token); 
         setNotes(data);
       } catch (error) {

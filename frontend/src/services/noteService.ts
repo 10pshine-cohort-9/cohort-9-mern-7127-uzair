@@ -1,39 +1,22 @@
-const API_URL = 'http://localhost:5000';
-
 const getNotes = async (token: string | null) => {
-    const response = await fetch(`${API_URL}/notes`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
     if(!response.ok){
         throw new Error(data.message);
     }
 
-    return data;
+    return data
+    } catch (error) {
+        throw error instanceof Error ? error.message : new Error("Something went wrong!");
+    };
 }
 
-const createNote = async (title:string, content:string, token:string) => {
-    const response = await fetch(`${API_URL}/notes`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({title,content}),
-    });
-
-    const data = await response.json();
-    
-    if(!response.ok){
-        throw new Error(data.message);
-    }
-
-    return data;
-}
-
-export { getNotes, createNote };
+export { getNotes };

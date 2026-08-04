@@ -1,40 +1,46 @@
-const API_URL = 'http://localhost:5000/auth';
-
 const login = async (email:string, password:string) => {
-    const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({email,password})
-    });
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email,password})
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if(!response.ok){
-        throw new Error(data.message);
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error.message : new Error("Something went wrong!");
     }
-
-    return data;
 };
 
 
 const signup = async (name:string, email:string, password:string) => {
-    const response = await fetch(`${API_URL}/signup`, {
-        method: 'POST',
-        headers: {
-            'Content-Type' : 'application/json',
-        },
-        body: JSON.stringify({ name, email, password})
-    });
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify({ name, email, password})
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if(!response.ok){
-        throw new Error(data.message);
-    }
+        if(!response.ok){
+            throw new Error(data.message);
+        }
 
     return data;
+    } catch (error) {
+        throw error instanceof Error ? error.message : new Error("Something went wrong!");
+    }
 }
 
 export { login,signup };

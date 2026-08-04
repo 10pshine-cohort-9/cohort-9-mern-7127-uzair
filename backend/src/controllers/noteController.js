@@ -1,5 +1,6 @@
 const Note = require('../models/Note');
 const logger = require('../utils/logger');
+const mongoose = require('mongoose');
 
 const createNote = async (req,res) => {
     try {
@@ -35,6 +36,10 @@ const updateNote = async (req, res) => {
     try {
         const { id } = req.params;
 
+        if(!mongoose.isObjectIdOrHexString(id)){
+            return res.status(400).json({message: "Invalid Note ID!"});
+        }
+
         const note = await Note.findOne({ _id: id });
 
         if (!note) {
@@ -62,6 +67,10 @@ const updateNote = async (req, res) => {
 const deleteNote = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if(!mongoose.isObjectIdOrHexString(id)){
+            return res.status(400).json({message: "Invalid Note ID!"});
+        }
 
         const note = await Note.findOne({ _id: id });
 
