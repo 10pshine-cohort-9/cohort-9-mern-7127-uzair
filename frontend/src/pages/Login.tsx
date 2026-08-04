@@ -17,9 +17,7 @@ const Login = ():JSX.Element => {
     setError('');
 
     try {
-      const data = await login(email, password);
-
-      localStorage.setItem('token', data.token);
+      await login(email, password);
       navigate('/dashboard');
 
     } catch (error) {

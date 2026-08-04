@@ -1,6 +1,5 @@
 interface AuthResponse {
     message: string,
-    token: string,
     user: {
         id: string,
         name: string,
@@ -10,8 +9,9 @@ interface AuthResponse {
 
 const login = async (email:string, password:string) : Promise<AuthResponse> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
             method: 'POST',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -33,8 +33,9 @@ const login = async (email:string, password:string) : Promise<AuthResponse> => {
 
 const signup = async (name:string, email:string, password:string) : Promise<AuthResponse> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/signup`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
             method: 'POST',
+            credentials: "include",
             headers: {
                 'Content-Type' : 'application/json',
             },
@@ -53,4 +54,20 @@ const signup = async (name:string, email:string, password:string) : Promise<Auth
     }
 }
 
-export { login,signup };
+const logout = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: "include",
+        });
+
+        if(!response.ok){
+            const data = await response.json();
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        throw error instanceof Error ? error : new Error("Something went Wrong!");
+    }
+}
+
+export { login,signup,logout };

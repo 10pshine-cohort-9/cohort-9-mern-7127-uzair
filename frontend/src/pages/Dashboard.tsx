@@ -5,6 +5,7 @@ import { NotebookPen, Trash2, LogOut } from 'lucide-react'
 import { getNotes } from '../services/noteService'
 import type { Note } from '../components/NoteCard'
 import NoteCard from '../components/NoteCard'
+import {logout} from '../services/authService'
 
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = useState<Note[]>([])
@@ -15,16 +16,14 @@ const Dashboard = (): JSX.Element => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const token = localStorage.getItem('token');
-
-        if(!token){
-          navigate('/login');
+        const data = await getNotes(); 
+        setNotes(data);
+      } catch (error) {
+        if(error instanceof Error && error.message === "Not Authorized!"){
+          navigate('login');
           return;
         }
 
-        const data = await getNotes(token); 
-        setNotes(data);
-      } catch (error) {
         setError(error instanceof Error ? error.message : 'Failed to load Notes!')
       }
     }
@@ -32,9 +31,13 @@ const Dashboard = (): JSX.Element => {
     fetchNotes()
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    navigate('/login')
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login')
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Logout Failed!')
+    }
   }
 
   return (

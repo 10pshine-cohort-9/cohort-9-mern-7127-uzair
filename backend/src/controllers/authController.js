@@ -26,9 +26,14 @@ const signup = async (req,res) => {
 
         const token = jwt.sign({ id: user._id },process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES_IN || "7d"});
 
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false
+        });
+        
         return res.status(201).json({
             message: "User registered successfully",
-            token,
             user: {
                 id: user._id,
                 name: user.name,
@@ -71,9 +76,14 @@ const login = async (req,res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d"});
 
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false
+        });
+        
         return res.status(200).json({
             message: "Login Successful! Redirecting....",
-            token,
             user: {
                 id: user._id,
                 name: user.name,
@@ -90,4 +100,15 @@ const login = async (req,res) => {
     }
 }
 
-module.exports = {signup,login};
+const logout = (req,res) => {
+    
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+    });
+
+    res.status(200).json({message: "Logged out Successully"});
+}
+
+module.exports = {signup,login,logout};

@@ -17,9 +17,7 @@ const SignUp = ():JSX.Element => {
     e.preventDefault()
     setError('');
     try {
-      const data = await signup(name, email, password);
-
-      localStorage.setItem('token', data.token);
+      await signup(name, email, password);
       navigate('/dashboard');
       
     } catch (error) {
