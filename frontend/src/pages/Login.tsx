@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { JSX } from 'react'
 import AuthCard from '../components/AuthCard'
 import { NotebookPen } from 'lucide-react'
+import { login } from '../services/authService'
 
 
 const Login = ():JSX.Element => {
@@ -16,18 +17,7 @@ const Login = ():JSX.Element => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/auth/login',{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email,password}),
-      });
-
-      const data = await response.json();
-
-      if(!response.ok){
-        throw new Error(data.message);
-      }
-
+      await login(email, password);
       navigate('/dashboard');
 
     } catch (error) {
@@ -53,7 +43,7 @@ const Login = ():JSX.Element => {
         <div className="w-full md:w-1/2 flex items-center justify-center px-8 py-12 bg-white overflow-y-auto">
           <AuthCard
             title="Welcome back"
-            subtitle="Log in to continue to Marginal"
+            subtitle="Log in to continue to Notify"
             footer={
               <>
                 Don't have an account? <Link to="/signup" className="text-[#C0453A] font-medium">Sign up</Link>
