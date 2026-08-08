@@ -70,4 +70,17 @@ const logout = async () : Promise<void> => {
     }
 }
 
-export { login,signup,logout };
+const getMe = async () : Promise<boolean> => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+
+        return response.ok;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error("Something went Wrong!");
+    }
+}
+
+export { login,signup,logout,getMe };
