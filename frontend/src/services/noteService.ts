@@ -1,5 +1,9 @@
 import type { Note } from "../components/NoteCard";
 
+type DeleteNoteResponse = {
+    message: string,
+}
+
 const getNotes = async () : Promise<Note[]>=> {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
@@ -19,7 +23,7 @@ const getNotes = async () : Promise<Note[]>=> {
     }
 }
 
-const createNote = async (title: string, content:string) => {
+const createNote = async (title: string, content:string) : Promise<Note> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes`, {
             method: 'POST',
@@ -40,7 +44,7 @@ const createNote = async (title: string, content:string) => {
     }
 }
 
-const updateNote = async (id: string, title: string, content: string) => {
+const updateNote = async (id: string, title: string, content: string): Promise<Note> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
             method: 'PUT',
@@ -61,7 +65,7 @@ const updateNote = async (id: string, title: string, content: string) => {
     }
 }
 
-const deleteNote = async (id: string) => {
+const deleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
             method: 'DELETE',

@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 type Note = {
     _id: string,
     title: string,
@@ -23,7 +25,9 @@ const NoteCard = ({ note, isSelected, onClick }: NoteCardProps) => {
       <h2 className="text-sm font-semibold mb-1">{note.title}</h2>
       <div
         className={`note-preview text-xs ${isSelected ? 'text-white/80' : 'text-gray-500'}`}
-        dangerouslySetInnerHTML={{ __html: note.content }}
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(note.content),
+        }}
       />
       <p className={`text-xs mt-2 ${isSelected ? 'text-white/60' : 'text-gray-400'}`}>
         {new Date(note.updatedAt).toLocaleDateString()}

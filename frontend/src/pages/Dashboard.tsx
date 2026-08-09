@@ -130,7 +130,7 @@ const Dashboard = (): JSX.Element => {
 
 
 
-      <div className="w-full md:w-80 border-r border-gray-200 bg-[#FAF6EC] flex flex-col">
+      <div className={`${selectedNote || isCreating ? 'hidden' : 'flex'} md:flex w-full md:w-80 border-r border-gray-200 bg-[#FAF6EC] flex-col`}>
         <div className="flex items-center justify-between px-5 py-5">
           <h1 className="text-xl font-semibold text-[#1D2939]">Notes</h1>
           <button 
@@ -159,7 +159,16 @@ const Dashboard = (): JSX.Element => {
 
 
  
-      <div className="hidden md:flex flex-1 flex-col px-12 py-10">
+      <div className={`${selectedNote || isCreating ? 'flex' : 'hidden'} md:flex flex-1 flex-col px-12 py-10`}>
+        <button
+          onClick={() => {
+            setSelectedNote(null)
+            setIsCreating(false)
+          }}
+          className="md:hidden mb-4 text-sm text-gray-500"
+        >
+          ← Back to notes
+        </button>
         {isCreating ? (
           <>
             <input
@@ -169,7 +178,11 @@ const Dashboard = (): JSX.Element => {
               className="text-3xl font-bold text-[#1D2939] mb-6 outline-none"
           />
 
-          <NoteEditor content={editContent} onChange={setEditContent} />
+          <NoteEditor
+            key="new" 
+            content="" 
+            onChange={setEditContent} 
+          />
 
           <button
             onClick={createNewNote}
