@@ -2,15 +2,19 @@ import type { JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { NotebookPen, Trash2, LogOut } from 'lucide-react'
-import { getNotes } from '../services/noteService'
+import { getNotes, createNote, updateNote, deleteNote } from '../services/noteService'
 import type { Note } from '../components/NoteCard'
 import NoteCard from '../components/NoteCard'
 import {logout} from '../services/authService'
+import NoteEditor from '../components/NotesEditor'
 
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = useState<Note[]>([])
   const [error, setError] = useState('')
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,7 +24,7 @@ const Dashboard = (): JSX.Element => {
         setNotes(data);
       } catch (error) {
         if(error instanceof Error && error.message === "Not Authorized!"){
-          navigate('login');
+          navigate('/login');
           return;
         }
 
@@ -30,6 +34,62 @@ const Dashboard = (): JSX.Element => {
 
     fetchNotes()
   }, [])
+
+  useEffect(() => {
+    if(selectedNote){
+      setEditTitle(selectedNote.title)
+      setEditContent(selectedNote.content)
+    }
+  }, [selectedNote])
+
+  const handleNewNote = () => {
+    setSelectedNote(null)
+    setEditTitle('')
+    setEditContent('')
+    setIsCreating(true)
+  }
+
+  const createNewNote = async () => {
+    try {
+      const newNote = await createNote(editTitle, editContent)
+      setNotes([newNote, ...notes])
+      setSelectedNote(newNote)
+      setIsCreating(false)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to create Note!")
+    }
+  }
+
+  const handleUpdate = async () => {
+    if(!selectedNote) return
+
+    try {
+      const updatedNote = await updateNote(selectedNote._id, editTitle, editContent)
+      setNotes(notes.map((note) => (note._id === updatedNote._id ? updatedNote : note)))
+      setSelectedNote(updatedNote)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to save Note!")
+    }
+  }
+
+  const handleSelectNote = (note: Note) => {
+    setIsCreating(false)
+    setSelectedNote(note)
+    setEditTitle(note.title)
+    setEditContent(note.content)
+  }
+
+  const handleDelete = async () => {
+    if(!selectedNote) return
+
+    try {
+      await deleteNote(selectedNote._id)
+      setNotes(notes.filter((note) => note._id !== selectedNote._id))
+      setSelectedNote(null)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to Delete Note!')
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -68,10 +128,14 @@ const Dashboard = (): JSX.Element => {
         </button>
       </div>
 
-      <div className="w-full md:w-80 border-r border-gray-200 bg-[#FAF6EC] flex flex-col">
+
+
+      <div className={`${selectedNote || isCreating ? 'hidden' : 'flex'} md:flex w-full md:w-80 border-r border-gray-200 bg-[#FAF6EC] flex-col`}>
         <div className="flex items-center justify-between px-5 py-5">
           <h1 className="text-xl font-semibold text-[#1D2939]">Notes</h1>
-          <button className="bg-[#C0453A] text-white text-xs font-medium px-3 py-1.5 rounded-md hover:opacity-90 transition">
+          <button 
+            onClick={handleNewNote}
+            className="bg-[#C0453A] text-white text-xs font-medium px-3 py-1.5 rounded-md hover:opacity-90 transition">
             + New
           </button>
         </div>
@@ -87,24 +151,79 @@ const Dashboard = (): JSX.Element => {
               key={note._id}
               note={note}
               isSelected={selectedNote?._id === note._id}
-              onClick={() => setSelectedNote(note)}
+              onClick={() => handleSelectNote(note)}
             />
           ))}
         </div>
       </div>
+
+
  
-      <div className="hidden md:flex flex-1 flex-col px-12 py-10">
-        {selectedNote ? (
+      <div className={`${selectedNote || isCreating ? 'flex' : 'hidden'} md:flex flex-1 flex-col px-12 py-10`}>
+        <button
+          onClick={() => {
+            setSelectedNote(null)
+            setIsCreating(false)
+          }}
+          className="md:hidden mb-4 text-sm text-gray-500"
+        >
+          ← Back to notes
+        </button>
+        {isCreating ? (
           <>
-            <h1 className="text-3xl font-bold text-[#1D2939] mb-2">{selectedNote.title}</h1>
-            <p className="text-xs text-gray-400 mb-6">
-              Last updated {new Date(selectedNote.updatedAt).toLocaleString()}
-            </p>
-            <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {selectedNote.content}
-            </p>
-          </>
-        ) : (
+            <input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder="Note title"
+              className="text-3xl font-bold text-[#1D2939] mb-6 outline-none"
+          />
+
+          <NoteEditor
+            key="new" 
+            content="" 
+            onChange={setEditContent} 
+          />
+
+          <button
+            onClick={createNewNote}
+            className="mt-6 self-start bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
+          >
+            Create note
+          </button>
+        </>
+     ) : selectedNote ? (
+        <>
+          <input
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="text-3xl font-bold text-[#1D2939] mb-2 outline-none"
+          />
+          <p className="text-xs text-gray-400 mb-6">
+            Last updated {new Date(selectedNote.updatedAt).toLocaleString()}
+          </p>
+
+          <NoteEditor 
+            key={isCreating ? 'new' : selectedNote?._id}
+            content={editContent}
+            onChange={setEditContent}
+          />
+
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={handleUpdate}
+              className="bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleDelete}
+              className="text-sm font-medium px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+            >
+              Delete
+            </button>
+          </div>
+        </>
+      ) : (
           <p className="text-gray-400">Select a note to see it here</p>
         )}
       </div>
