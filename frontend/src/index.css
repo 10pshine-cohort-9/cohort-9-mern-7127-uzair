@@ -16,3 +16,27 @@
   list-style: decimal;
   padding-left: 1.25rem;
 }
+
+.ProseMirror ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.ProseMirror ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+
+.ProseMirror h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
