@@ -84,4 +84,61 @@ const deleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     }
 }
 
-export { getNotes,createNote,updateNote,deleteNote };
+const getTrash = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/trash`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error('Something went wrong. Please try again.');
+    }
+}
+
+const restoreNote = async (id: string) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}/restore`, {
+            method: 'PATCH',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error('Something went wrong. Please try again.');
+    }
+}
+
+const permanentlyDeleteNote = async (id: string) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}/permanent`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error('Something went wrong. Please try again.');
+    }
+}
+
+export { getNotes,createNote,updateNote,deleteNote,getTrash,restoreNote,permanentlyDeleteNote };
