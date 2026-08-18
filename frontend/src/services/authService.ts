@@ -7,6 +7,12 @@ interface AuthResponse {
     },
 };
 
+type ProfileResponse = {
+  name: string,
+  email: string,
+  profilePicture: string,
+};
+
 const login = async (email:string, password:string) : Promise<AuthResponse> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
@@ -83,7 +89,7 @@ const getMe = async () : Promise<boolean> => {
     }
 }
 
-const getProfile = async () => {
+const getProfile = async () : Promise<ProfileResponse> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
             method: 'GET',
@@ -102,7 +108,7 @@ const getProfile = async () => {
     }
 }
 
-const uploadProfilePicture = async (file: File) => {
+const uploadProfilePicture = async (file: File) : Promise<ProfileResponse> => {
     try {
         const formData = new FormData();
         formData.append('profilePicture', file);

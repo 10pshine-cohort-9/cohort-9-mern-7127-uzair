@@ -72,7 +72,7 @@ const deleteNote = async (req, res) => {
             return res.status(400).json({message: "Invalid Note ID!"});
         }
 
-        const note = await Note.findOneAndUpdate({ _id: id, user: req.user.id }, {deletedAt: new Date()}, {new: true});
+        const note = await Note.findOneAndUpdate({ _id: id, user: req.user.id, deletedAt: null }, {deletedAt: new Date()}, {new: true});
 
         if (!note) {
             return res.status(404).json({ message: "Note Not Found!" });

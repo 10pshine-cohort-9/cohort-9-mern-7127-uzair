@@ -7,10 +7,15 @@ import type { Note } from '../components/NoteCard'
 import NoteCard from '../components/NoteCard'
 import {logout} from '../services/authService'
 import NoteEditor from '../components/NotesEditor'
+import { useSearchParams } from 'react-router-dom'
+import DOMPurify from 'dompurify'
 
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = useState<Note[]>([])
-  const [view, setView] = useState<'notes' | 'trash'>('notes')
+  const [searchParams] = useSearchParams()
+  const [view, setView] = useState<'notes' | 'trash'>(
+    searchParams.get('view') === 'trash' ? 'trash' : 'notes'
+  )
   const [error, setError] = useState('')
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
   const [editTitle, setEditTitle] = useState('')
@@ -249,7 +254,11 @@ const Dashboard = (): JSX.Element => {
             <h1 className="text-3xl font-bold text-[#1D2939] mb-2">{selectedNote.title}</h1>
             <div
               className="text-base text-gray-700 mb-6"
-              dangerouslySetInnerHTML={{ __html: selectedNote.content }}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(selectedNote.content, {
+                ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'h1', 'h2', 'br']
+                })
+              }}  
             />
             <div className="flex gap-3">
               <button

@@ -84,7 +84,7 @@ const deleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     }
 }
 
-const getTrash = async () => {
+const getTrash = async () : Promise<Note[]> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/trash`, {
             method: 'GET',
@@ -103,7 +103,7 @@ const getTrash = async () => {
     }
 }
 
-const restoreNote = async (id: string) => {
+const restoreNote = async (id: string) : Promise<Note[]> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/restore`, {
             method: 'PATCH',
@@ -122,7 +122,7 @@ const restoreNote = async (id: string) => {
     }
 }
 
-const permanentlyDeleteNote = async (id: string) => {
+const permanentlyDeleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/permanent`, {
             method: 'DELETE',

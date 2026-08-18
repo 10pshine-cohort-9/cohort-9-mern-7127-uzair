@@ -1,15 +1,22 @@
 import { NotebookPen, Trash2, LogOut, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
+import { useState } from 'react'
+import type {JSX} from 'react'
 
-const Sidebar = () => {
+const Sidebar = () : JSX.Element => {
   const navigate = useNavigate()
+  const [error, setError] = useState('')
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login')
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Logout failed!')
+    }
   }
-
+  
   return (
     <div className="w-16 md:w-56 bg-[#1D2939] text-white flex flex-col py-6 px-3">
       <div className="flex items-center gap-2 px-2 mb-8">
