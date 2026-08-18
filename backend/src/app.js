@@ -17,6 +17,7 @@ app.use(
     credentials: true,
   })
 );
+app.use('/uploads', express.static('uploads'));
 app.use(pinoHttp({logger}));
 
 app.use('/auth', authRoutes);

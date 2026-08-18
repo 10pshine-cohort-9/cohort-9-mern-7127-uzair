@@ -112,7 +112,43 @@ const logout = (req,res) => {
 }
 
 const me = (req,res) => {
-    return res.status(200).json({user: req.user});
+    try {
+        return res.status(200).json({
+            name: req.user.name,
+            email: req.user.email,
+            profilePicture: req.user.profilePicture
+        });
+    } catch (error) {
+        logger.error(error.message);
+
+        return res.status(500).json({
+            message: "Server Error"
+        });
+    }
 }
 
-module.exports = {signup,login,logout,me};
+const updateProfilePicture = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded!" });
+  }
+
+  try {
+    const profilePicture = `/uploads/${req.file.filename}`;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePicture },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+      profilePicture: user.profilePicture
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+}
+
+module.exports = {signup,login,logout,me,updateProfilePicture};

@@ -82,8 +82,6 @@ const deleteNote = async (req, res) => {
             return res.status(403).json({ message: "Not Authorized!" });
         }
 
-        await Note.deleteOne({ _id: id });
-
         return res.status(200).json({ message: "Note deleted successfully!" });
     } catch (error) {
         logger.error(error.message);

@@ -3,6 +3,7 @@ import type {JSX} from 'react'
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Profile from './pages/Profile'
 
 
 function App(): JSX.Element {
@@ -14,6 +15,7 @@ function App(): JSX.Element {
         <Route path='/login' element={<Login/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
         <Route path='/' element={<Navigate to='/login' replace/>}/>
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )

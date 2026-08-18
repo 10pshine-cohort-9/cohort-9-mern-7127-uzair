@@ -1,7 +1,7 @@
 import type { JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { NotebookPen, Trash2, LogOut } from 'lucide-react'
+import { NotebookPen, Trash2, LogOut, User } from 'lucide-react'
 import { getNotes, createNote, updateNote, deleteNote, getTrash, restoreNote, permanentlyDeleteNote } from '../services/noteService'
 import type { Note } from '../components/NoteCard'
 import NoteCard from '../components/NoteCard'
@@ -35,7 +35,7 @@ const Dashboard = (): JSX.Element => {
     }
 
     fetchNotes()
-  }, [])
+  }, [view])
 
   useEffect(() => {
     if(selectedNote){
@@ -150,7 +150,15 @@ const Dashboard = (): JSX.Element => {
             <span className="hidden md:inline">Trash</span>
           </button>
         </nav>
- 
+
+        <button
+          onClick={() => navigate('/profile')}
+          className="mt-2 flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10"
+        >
+          <User size={16} />
+          <span className="hidden md:inline">Profile</span>
+        </button>
+
         <button
           onClick={handleLogout}
           className="mt-auto flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10"
@@ -243,18 +251,20 @@ const Dashboard = (): JSX.Element => {
               className="text-base text-gray-700 mb-6"
               dangerouslySetInnerHTML={{ __html: selectedNote.content }}
             />
-            <button
-              onClick={() => handleRestore(selectedNote)}
-              className="self-start bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
-            >
-              Restore
-            </button>
-            <button
-              onClick={() => handlePermanentDelete(selectedNote)}
-              className="text-sm font-medium px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
-            >
-              Delete permanently
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleRestore(selectedNote)}
+                className="bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
+              >
+                Restore
+              </button>
+              <button
+                onClick={() => handlePermanentDelete(selectedNote)}
+                className="text-sm font-medium px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+              >
+                Delete permanently
+              </button>
+            </div>
           </>
       ) : (
         <>

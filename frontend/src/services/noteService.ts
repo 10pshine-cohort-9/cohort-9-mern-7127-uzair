@@ -86,7 +86,7 @@ const deleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
 
 const getTrash = async () => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/trash`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/trash`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -105,7 +105,7 @@ const getTrash = async () => {
 
 const restoreNote = async (id: string) => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}/restore`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/restore`, {
             method: 'PATCH',
             credentials: 'include'
         });
@@ -124,7 +124,7 @@ const restoreNote = async (id: string) => {
 
 const permanentlyDeleteNote = async (id: string) => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}/permanent`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/permanent`, {
             method: 'DELETE',
             credentials: 'include'
         });
