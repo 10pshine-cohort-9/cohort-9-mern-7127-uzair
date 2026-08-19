@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const logger  = require('../utils/logger');
+const fs = require('fs');
+const path = require('path');
 
 const signup = async (req,res) => {
     try {
@@ -112,7 +114,56 @@ const logout = (req,res) => {
 }
 
 const me = (req,res) => {
-    return res.status(200).json({user: req.user});
+    try {
+        return res.status(200).json({
+            name: req.user.name,
+            email: req.user.email,
+            profilePicture: req.user.profilePicture
+        });
+    } catch (error) {
+        logger.error(error.message);
+
+        return res.status(500).json({
+            message: "Server Error"
+        });
+    }
 }
 
-module.exports = {signup,login,logout,me};
+const updateProfilePicture = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded!" });
+  }
+
+  try {
+    const existingUser = await User.findById(req.user._id);
+    const oldPicturePath = existingUser?.profilePicture;
+
+    const profilePicture = `/uploads/${req.file.filename}`;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePicture },
+      { new: true }
+    );
+
+    if (!user) {
+      fs.unlink(path.join('uploads', req.file.filename), () => {});
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    if (oldPicturePath) {
+      fs.unlink(path.join('.', oldPicturePath), () => {});
+    }
+
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+      profilePicture: user.profilePicture
+    });
+  } catch (error) {
+    fs.unlink(path.join('uploads', req.file.filename), () => {});
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+};
+
+module.exports = {signup,login,logout,me,updateProfilePicture};

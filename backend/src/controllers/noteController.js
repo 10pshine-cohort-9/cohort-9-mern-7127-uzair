@@ -23,7 +23,7 @@ const createNote = async (req,res) => {
 const getNotes = async (req,res) => {
     try {
         const id = req.user.id;
-        const Notes = await Note.find({user: id});
+        const Notes = await Note.find({user: id, deletedAt: null});
         return res.status(200).json(Notes);
     } catch (error) {
         logger.error(error.message);
@@ -72,7 +72,7 @@ const deleteNote = async (req, res) => {
             return res.status(400).json({message: "Invalid Note ID!"});
         }
 
-        const note = await Note.findOne({ _id: id });
+        const note = await Note.findOneAndUpdate({ _id: id, user: req.user.id, deletedAt: null }, {deletedAt: new Date()}, {new: true});
 
         if (!note) {
             return res.status(404).json({ message: "Note Not Found!" });
@@ -82,8 +82,6 @@ const deleteNote = async (req, res) => {
             return res.status(403).json({ message: "Not Authorized!" });
         }
 
-        await Note.deleteOne({ _id: id });
-
         return res.status(200).json({ message: "Note deleted successfully!" });
     } catch (error) {
         logger.error(error.message);
@@ -91,4 +89,60 @@ const deleteNote = async (req, res) => {
     }
 }
 
-module.exports = { createNote, getNotes, updateNote, deleteNote };
+const getTrash = async (req, res) => {
+  try {
+    const notes = await Note.find({ user: req.user._id, deletedAt: { $ne: null } });
+    return res.status(200).json(notes);
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+}
+
+const restoreNote = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.isObjectIdOrHexString(id)) {
+    return res.status(400).json({ message: "Invalid Note ID!" });
+  }
+
+  try {
+    const note = await Note.findOneAndUpdate(
+      { _id: id, user: req.user._id },
+      { deletedAt: null },
+      { new: true }
+    );
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found!" });
+    }
+
+    return res.status(200).json(note);
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+}
+
+const permanentlyDeleteNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isObjectIdOrHexString(id)) {
+        return res.status(400).json({ message: "Invalid Note ID!" });
+    }
+    const note = await Note.findOneAndDelete({
+      _id: id,
+      user: req.user._id,
+      deletedAt: { $ne: null }
+    });
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found!" });
+    }
+
+    return res.status(200).json({ message: "Note permanently deleted" });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+}
+
+module.exports = { createNote, getNotes, updateNote, deleteNote, getTrash, restoreNote, permanentlyDeleteNote };

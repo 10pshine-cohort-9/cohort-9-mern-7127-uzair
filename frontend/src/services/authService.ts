@@ -7,6 +7,12 @@ interface AuthResponse {
     },
 };
 
+type ProfileResponse = {
+  name: string,
+  email: string,
+  profilePicture: string,
+};
+
 const login = async (email:string, password:string) : Promise<AuthResponse> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
@@ -83,4 +89,46 @@ const getMe = async () : Promise<boolean> => {
     }
 }
 
-export { login,signup,logout,getMe };
+const getProfile = async () : Promise<ProfileResponse> => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error('Something went wrong. Please try again.');
+    }
+}
+
+const uploadProfilePicture = async (file: File) : Promise<ProfileResponse> => {
+    try {
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/profile-picture`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        return data;
+    } catch (error) {
+        throw error instanceof Error ? error : new Error('Something went wrong. Please try again.');
+    }
+}
+
+export { login,signup,logout,getMe,getProfile,uploadProfilePicture };

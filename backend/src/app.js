@@ -17,6 +17,11 @@ app.use(
     credentials: true,
   })
 );
+app.use('/uploads', express.static('uploads', {
+  setHeaders: (res) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+  }
+}));
 app.use(pinoHttp({logger}));
 
 app.use('/auth', authRoutes);
