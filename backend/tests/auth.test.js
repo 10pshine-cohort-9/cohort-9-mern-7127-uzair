@@ -1,9 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../src/app')
+const app = require('../src/app');
 const { connect, closeDatabase, clearDatabase } = require('./setup');
-
-require('dotenv').config();
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -19,16 +17,16 @@ describe('Auth Routes', () => {
     it('should create a new user with valid data', async () => {
       const res = await chai.request(app)
         .post('/auth/signup')
-        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
+        .send({ name: 'M Uzair', email: 'm.uzair@gmail.com', password: 'uzair5421' });
 
       expect(res).to.have.status(201);
-      expect(res.body.user).to.have.property('email', 'test@example.com');
+      expect(res.body.user).to.have.property('email', 'm.uzair@gmail.com');
     });
 
     it('should reject signup with missing fields', async () => {
       const res = await chai.request(app)
         .post('/auth/signup')
-        .send({ name: 'Test User' });
+        .send({ name: 'Tahir Akhter' });
 
       expect(res).to.have.status(400);
     });
@@ -36,11 +34,11 @@ describe('Auth Routes', () => {
     it('should reject signup with a duplicate email', async () => {
       await chai.request(app)
         .post('/auth/signup')
-        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
+        .send({ name: 'Abdullah', email: 'abdullah.k@outlook.com', password: 'abdullah123' });
 
       const res = await chai.request(app)
         .post('/auth/signup')
-        .send({ name: 'Another User', email: 'test@example.com', password: 'password456' });
+        .send({ name: 'Abdullah K', email: 'abdullah.k@outlook.com', password: 'abdullah1234' });
 
       expect(res).to.have.status(400);
     });
@@ -50,13 +48,13 @@ describe('Auth Routes', () => {
     beforeEach(async () => {
       await chai.request(app)
         .post('/auth/signup')
-        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
+        .send({ name: 'Ali Ahmed', email: 'ali.ahmed@yahoo.com', password: 'mochachai' });
     });
 
     it('should log in with correct credentials', async () => {
       const res = await chai.request(app)
         .post('/auth/login')
-        .send({ email: 'test@example.com', password: 'password123' });
+        .send({ email: 'ali.ahmed@yahoo.com', password: 'mochachai' });
 
       expect(res).to.have.status(200);
       expect(res).to.have.cookie('token');
@@ -65,7 +63,7 @@ describe('Auth Routes', () => {
     it('should reject login with wrong password', async () => {
       const res = await chai.request(app)
         .post('/auth/login')
-        .send({ email: 'test@example.com', password: 'wrongpassword' });
+        .send({ email: 'ali.ahmed@yahoo.com', password: 'aliahmed' });
 
       expect(res).to.have.status(401);
     });
@@ -73,7 +71,7 @@ describe('Auth Routes', () => {
     it('should reject login with an email that does not exist', async () => {
       const res = await chai.request(app)
         .post('/auth/login')
-        .send({ email: 'nobody@example.com', password: 'password123' });
+        .send({ email: 'notreal.person@gmail.com', password: 'mochachai' });
 
       expect(res).to.have.status(401);
     });
