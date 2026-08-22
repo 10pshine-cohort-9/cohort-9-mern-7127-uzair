@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"No tests yet\" && exit 0",
+    "test": "mocha --timeout 20000 --exit tests/**/*.test.js",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
@@ -27,6 +27,10 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
+    "chai": "^4.5.0",
+    "chai-http": "^4.4.0",
+    "mocha": "^11.8.0",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14"
   }
 }

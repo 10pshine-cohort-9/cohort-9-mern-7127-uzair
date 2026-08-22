@@ -4,7 +4,8 @@ const pinoHttp = require('pino-http');
 const logger = require('./utils/logger');
 const authRoutes = require('./routes/authRoutes');
 const notesRoutes = require('./routes/notesRoutes');
-const cookieParser = require('cookie-parser'); 
+const cookieParser = require('cookie-parser');
+const errorHandler = require('./middleware/errorHandler'); 
 
 
 const app = express();
@@ -30,5 +31,11 @@ app.use('/notes', notesRoutes);
 app.get("/",(req,res)=>{
     res.send("App is working!");
 });
+
+app.use((req,res)=>{
+  res.status(404).json({message: "Route not found!"});
+});
+
+app.use(errorHandler);
 
 module.exports = app;
