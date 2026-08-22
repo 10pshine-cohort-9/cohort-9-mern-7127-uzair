@@ -5,19 +5,24 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 let mongoServer;
 
 const connect = async () => {
-  mongoServer = await MongoMemoryServer.create({
-    instance: {
-        launchTimeout: 60000,
-    }
-  });
+  mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
+
+  try {
+    await mongoose.connect(uri);
+  } catch (error) {
+    await mongoServer.stop();
+    throw error;
+  }
 };
 
 const closeDatabase = async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
+  try {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+  } finally {
+    await mongoServer.stop();
+  }
 };
 
 const clearDatabase = async () => {
