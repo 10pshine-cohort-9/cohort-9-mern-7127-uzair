@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import NotFound from './pages/NotFound'
 
 
 function App(): JSX.Element {
@@ -16,6 +17,7 @@ function App(): JSX.Element {
         <Route path='/dashboard' element={<Dashboard/>}/>
         <Route path='/' element={<Navigate to='/login' replace/>}/>
         <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
