@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { NotebookPen, Mail, Lock, ArrowRight } from 'lucide-react'
 import { login } from '../services/authService'
+import type { JSX } from 'react'
 
-const Login = () => {
+const Login = () : JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +29,7 @@ const Login = () => {
           <div className="absolute w-96 h-96 bg-black/10 rounded-full blur-3xl -bottom-24 -right-16" />
 
           <div className="relative max-w-lg flex items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
               <NotebookPen size={45} />
             </div>
             <div>

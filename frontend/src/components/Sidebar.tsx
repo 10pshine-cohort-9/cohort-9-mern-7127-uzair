@@ -2,8 +2,9 @@ import { NotebookPen, Trash2, LogOut, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { useState } from 'react'
+import type { JSX } from 'react'
 
-const Sidebar = () => {
+const Sidebar = () : JSX.Element => {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
