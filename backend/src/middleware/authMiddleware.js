@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const logger = require('../utils/logger')
 
 const authMiddleware = async (req, res, next) => {
     const token = req.cookies.token;
@@ -19,6 +20,7 @@ const authMiddleware = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
+        logger.error(error.message);
         return res.status(401).json({ message: "Not Authorized!" });
     }
 }

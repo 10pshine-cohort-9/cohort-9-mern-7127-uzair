@@ -94,6 +94,7 @@ const getTrash = async (req, res) => {
     const notes = await Note.find({ user: req.user._id, deletedAt: { $ne: null } });
     return res.status(200).json(notes);
   } catch (error) {
+    logger.error(error.message);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 }
@@ -118,6 +119,7 @@ const restoreNote = async (req, res) => {
 
     return res.status(200).json(note);
   } catch (error) {
+    logger.error(error.message);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 }
@@ -141,6 +143,7 @@ const permanentlyDeleteNote = async (req, res) => {
 
     return res.status(200).json({ message: "Note permanently deleted" });
   } catch (error) {
+    logger.error(error.message);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 }

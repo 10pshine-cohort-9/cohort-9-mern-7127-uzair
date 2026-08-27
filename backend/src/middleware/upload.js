@@ -1,7 +1,8 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
+const logger = require('../utils/logger')
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -23,6 +24,7 @@ const processAndSaveImage = async (req, res, next) => {
     req.file.filename = filename;
     next();
   } catch (error) {
+    logger.error(error.message);
     return res.status(400).json({ message: "Invalid image file!" });
   }
 };

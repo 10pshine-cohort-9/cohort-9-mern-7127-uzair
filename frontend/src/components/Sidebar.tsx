@@ -5,7 +5,7 @@ import { logout } from '../services/authService'
 import { getNotes, createNote } from '../services/noteService'
 
 const escapeHtml = (text: string) =>
-  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  text.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;')
 
 const plainTextToHtml = (text: string) =>
   text.split('\n').filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join('')
@@ -159,6 +159,7 @@ const Sidebar = () => {
 
       <nav className="flex flex-col gap-1">
         <button
+          type="button"
           onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 px-2 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-white/10"
         >
@@ -166,6 +167,7 @@ const Sidebar = () => {
           <span className="hidden md:inline">Notes</span>
         </button>
         <button
+          type="button"
           onClick={() => navigate('/dashboard?view=trash')}
           className="flex items-center gap-2 px-2 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-white/10"
         >
@@ -177,6 +179,7 @@ const Sidebar = () => {
       <div className="h-px bg-white/10 my-4 mx-2" />
 
       <button
+        type="button"
         onClick={handleImportClick}
         disabled={busy}
         aria-label="Import notes from file"
@@ -186,6 +189,7 @@ const Sidebar = () => {
         <span className="hidden md:inline">Import notes</span>
       </button>
       <button
+        type="button"
         onClick={handleExportClick}
         disabled={busy}
         aria-label="Export notes to file"
@@ -206,6 +210,7 @@ const Sidebar = () => {
       <div className="h-px bg-white/10 my-4 mx-2" />
 
       <button
+        type="button"
         onClick={() => navigate('/profile')}
         className="flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10"
       >
@@ -217,6 +222,7 @@ const Sidebar = () => {
       {success && <p className="text-xs text-emerald-400 px-2 mt-2">{success}</p>}
 
       <button
+        type="button"
         onClick={handleLogout}
         className="mt-auto flex items-center gap-2 px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-white/10"
       >
@@ -233,6 +239,7 @@ const Sidebar = () => {
                 <h2 className="text-sm font-semibold">Export notes</h2>
               </div>
               <button
+                type="button"
                 onClick={() => setExportPreview(null)}
                 aria-label="Close"
                 className="text-gray-400 hover:text-gray-600"
@@ -255,12 +262,14 @@ const Sidebar = () => {
 
             <div className="flex justify-end gap-2 border-t border-gray-200 px-5 py-3">
               <button
+                type="button"
                 onClick={() => setExportPreview(null)}
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={confirmExport}
                 className="rounded-md bg-[#1D2939] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1D2939]/90"
               >
@@ -280,6 +289,7 @@ const Sidebar = () => {
                 <h2 className="text-sm font-semibold">Import notes</h2>
               </div>
               <button
+                type="button"
                 onClick={closeImportModal}
                 aria-label="Close"
                 className="text-gray-400 hover:text-gray-600"
@@ -338,12 +348,14 @@ const Sidebar = () => {
               {importStage === 'preview' && (
                 <>
                   <button
+                    type="button"
                     onClick={closeImportModal}
                     className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={confirmImport}
                     className="rounded-md bg-[#1D2939] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1D2939]/90"
                   >
@@ -353,6 +365,7 @@ const Sidebar = () => {
               )}
               {importStage === 'done' && (
                 <button
+                  type="button"
                   onClick={closeImportModal}
                   className="rounded-md bg-[#1D2939] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1D2939]/90"
                 >

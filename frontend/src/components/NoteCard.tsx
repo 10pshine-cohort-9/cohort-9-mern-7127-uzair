@@ -17,6 +17,7 @@ interface NoteCardProps {
 const NoteCard = ({ note, isSelected, onClick }: NoteCardProps) => {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`w-full text-left rounded-lg p-4 transition ${
         isSelected ? 'bg-[#C0453A] text-white' : 'bg-white hover:bg-gray-50'
