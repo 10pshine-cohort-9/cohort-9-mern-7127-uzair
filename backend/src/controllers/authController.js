@@ -21,7 +21,7 @@ const signup = async (req,res) => {
             });
         }
 
-        const userExists = await User.findOne({email});
+        const userExists = await User.findOne({email : String(email)});
 
         if(userExists){
             return res.status(400).json({
@@ -73,7 +73,7 @@ const login = async (req,res) => {
             });
         }
 
-        const user = await User.findOne({email});
+        const user = await User.findOne({email: String(email)});
         if(!user){
             return res.status(401).json({
                 message:"Invalid Credentials"

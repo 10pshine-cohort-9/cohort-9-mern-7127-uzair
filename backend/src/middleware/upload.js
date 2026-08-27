@@ -3,6 +3,7 @@ const sharp = require('sharp');
 const path = require('node:path');
 const fs = require('node:fs');
 const logger = require('../utils/logger')
+const crypto = require('node:crypto')
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -13,7 +14,7 @@ const processAndSaveImage = async (req, res, next) => {
   if (!req.file) return next();
 
   try {
-    const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}.webp`;
+    const filename = `${Date.now()}-${crypto.randomUUID()}.webp`;
     const outputPath = path.join('uploads', filename);
 
     await sharp(req.file.buffer)

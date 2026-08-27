@@ -5,7 +5,7 @@ import { logout } from '../services/authService'
 import { getNotes, createNote } from '../services/noteService'
 
 const escapeHtml = (text: string) =>
-  text.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;')
+  text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 
 const plainTextToHtml = (text: string) =>
   text.split('\n').filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join('')
