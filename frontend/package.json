@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "jest --config jest.config.cjs",
+    "test:coverage": "jest --coverage",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",

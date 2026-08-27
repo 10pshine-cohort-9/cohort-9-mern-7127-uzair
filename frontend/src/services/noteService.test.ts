@@ -61,27 +61,27 @@ describe('noteService', () => {
         json: async () => ({ message: 'Note deleted successfully!' }),
       })
 
-      await deleteNote('abc123')
+      await deleteNote('507f1f77bcf86cd799439011')
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/notes/abc123'),
+        expect.stringContaining('/notes/507f1f77bcf86cd799439011'),
         expect.objectContaining({ method: 'DELETE' })
       )
     })
   })
   describe('updateNote', () => {
     it('sends updated title and content to the correct note id', async () => {
-      const mockUpdatedNote = { _id: 'abc123', title: 'Updated title', content: 'Updated content', createdAt: '', updatedAt: '' }
+      const mockUpdatedNote = { _id: '507f1f77bcf86cd799439011', title: 'Updated title', content: 'Updated content', createdAt: '', updatedAt: '' }
 
       ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockUpdatedNote,
     })
 
-    const result = await updateNote('abc123', 'Updated title', 'Updated content')
+    const result = await updateNote('507f1f77bcf86cd799439011', 'Updated title', 'Updated content')
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/notes/abc123'),
+      expect.stringContaining('/notes/507f1f77bcf86cd799439011'),
       expect.objectContaining({
         method: 'PUT',
         credentials: 'include',
@@ -95,7 +95,7 @@ describe('noteService', () => {
       ok: false,
       json: async () => ({ message: 'Note Not Found!' }),
     })
-      await expect(updateNote('nonexistent', 'Title', 'Content')).rejects.toThrow('Note Not Found!')
+      await expect(updateNote('507f1f77bcf86cd799439099', 'Title', 'Content')).rejects.toThrow('Note Not Found!')
     })
     })
 })
