@@ -7,6 +7,6 @@ const errorHandler = (err, req, res, next) => {
   const message = statusCode === 500 ? 'Something went wrong. Please try again.' : err.message;
 
   return res.status(statusCode).json({ message });
-};
+};  
 
 module.exports = errorHandler;
