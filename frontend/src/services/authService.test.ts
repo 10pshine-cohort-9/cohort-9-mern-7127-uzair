@@ -1,4 +1,4 @@
-import { login, signup, getProfile, uploadProfilePicture } from './authService'
+import { login, signup, logout, getMe, getProfile, uploadProfilePicture } from './authService'
 
 describe('authService', () => {
   beforeEach(() => {
@@ -46,7 +46,83 @@ describe('authService', () => {
 
       expect(result.user.name).toBe('Ali Ahmed')
     })
+
+    it('throws an error when the email is already registered', async () => {
+      ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ message: 'User already exists' }),
+      })
+
+      await expect(signup('Ali Ahmed', 'ali.ahmed@yahoo.com', 'blueMountain7')).rejects.toThrow(
+        'User already exists'
+      )
+    })
+
+
+    it('rethrows the original error when fetch itself rejects with an Error', async () => {
+      ;(globalThis.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network down'))
+
+      await expect(signup('Ali Ahmed', 'ali.ahmed@yahoo.com', 'blueMountain7')).rejects.toThrow(
+        'Network down'
+      )
+    })
+
+
+    it('wraps a non-Error rejection in a generic error', async () => {
+      ;(globalThis.fetch as jest.Mock).mockRejectedValueOnce('some string failure')
+
+      await expect(signup('Ali Ahmed', 'ali.ahmed@yahoo.com', 'blueMountain7')).rejects.toThrow(
+        'Something went wrong!'
+      )
+    })
   })
+
+  describe('logout', () => {
+    it('resolves without throwing when logout succeeds', async () => {
+      ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+      })
+
+      await expect(logout()).resolves.toBeUndefined()
+
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/logout'),
+        expect.objectContaining({ method: 'POST', credentials: 'include' })
+      )
+    })
+
+    it('throws an error when the server responds with a failure', async () => {
+      ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ message: 'Session already expired' }),
+      })
+
+      await expect(logout()).rejects.toThrow('Session already expired')
+    })
+  })
+
+  describe('getMe', () => {
+    it('returns true when the session is valid', async () => {
+      ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+      })
+
+      const result = await getMe()
+
+      expect(result).toBe(true)
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/me'),
+        expect.objectContaining({ method: 'GET', credentials: 'include' })
+      )
+    })
+
+    it('throws when fetch itself rejects', async () => {
+      ;(globalThis.fetch as jest.Mock).mockRejectedValueOnce(new Error('Timed out'))
+
+      await expect(getMe()).rejects.toThrow('Timed out')
+    })
+  })
+
   describe('getProfile', () => {
     it('returns the logged-in user profile data', async () => {
       const mockProfile = { name: 'M Uzair', email: 'm.uzair@gmail.com', profilePicture: '' }

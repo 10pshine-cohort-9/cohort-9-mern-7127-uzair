@@ -89,7 +89,7 @@ const Sidebar = () => {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `marginal-notes-${new Date().toISOString().split('T')[0]}.txt`
+    link.download = `notify-notes-${new Date().toISOString().split('T')[0]}.txt`
     link.click()
     URL.revokeObjectURL(url)
     setSuccess(`Exported ${exportPreview.count} note${exportPreview.count === 1 ? '' : 's'}`)
@@ -145,8 +145,7 @@ const Sidebar = () => {
     setImportResult(null)
     setImportStage('preview')
     if (shouldRefresh) {
-      setSuccess(`Imported ${importResult?.succeeded} note${importResult?.succeeded === 1 ? '' : 's'}`)
-      navigate('/dashboard')
+      window.location.href = '/dashboard'
     }
   }
 

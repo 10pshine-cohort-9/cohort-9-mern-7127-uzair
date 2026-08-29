@@ -10,3 +10,5 @@ backend/node_modules
 backend/.env
 backend/coverage/
 backend/.nyc_output/
+backend/uploads/*
+!backend/uploads/.gitkeep

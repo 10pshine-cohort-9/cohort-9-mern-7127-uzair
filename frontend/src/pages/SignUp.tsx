@@ -13,6 +13,12 @@ const SignUp = () : JSX.Element => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+
     try {
       await signup(name, email, password)
       navigate('/dashboard')
@@ -83,6 +89,7 @@ const SignUp = () : JSX.Element => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={8}
                   className="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C0453A] focus:border-transparent transition"
                 />
               </div>
