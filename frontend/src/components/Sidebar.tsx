@@ -37,6 +37,9 @@ const parseImportFile = (text: string): ParsedNote[] => {
 
 type ImportStage = 'preview' | 'importing' | 'done'
 
+const MAX_IMPORT_NOTES = 500
+const IMPORT_BATCH_SIZE = 10
+
 const Sidebar = () => {
   const navigate = useNavigate()
   const [error, setError] = useState('')
@@ -127,19 +130,35 @@ const Sidebar = () => {
 
   const confirmImport = async () => {
     if (!importNotes) return
+
+    const notesToImport = importNotes.slice(0, MAX_IMPORT_NOTES)
     setImportStage('importing')
 
-    const results = await Promise.allSettled(
-      importNotes.map((note) => createNote(note.title, plainTextToHtml(note.content)))
-    )
-    const succeeded = results.filter((r) => r.status === 'fulfilled').length
-    const failed = results.length - succeeded
+    try {
+      let succeeded = 0
+      let failed = 0
 
-    setImportResult({ succeeded, failed })
-    setImportStage('done')
+      for (let i = 0; i < notesToImport.length; i += IMPORT_BATCH_SIZE) {
+        const batch = notesToImport.slice(i, i + IMPORT_BATCH_SIZE)
+        const batchResults = await Promise.allSettled(
+          batch.map((note) => createNote(note.title, plainTextToHtml(note.content)))
+        )
+        const batchSucceeded = batchResults.filter((r) => r.status === 'fulfilled').length
+        succeeded += batchSucceeded
+        failed += batchResults.length - batchSucceeded
+      }
+
+      setImportResult({ succeeded, failed })
+      setImportStage('done')
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to import notes!')
+      setImportStage('preview')
+    }
   }
 
   const closeImportModal = () => {
+    if (importStage === 'importing') return
+
     const shouldRefresh = importStage === 'done' && (importResult?.succeeded ?? 0) > 0
     setImportNotes(null)
     setImportResult(null)
@@ -291,7 +310,8 @@ const Sidebar = () => {
                 type="button"
                 onClick={closeImportModal}
                 aria-label="Close"
-                className="text-gray-400 hover:text-gray-600"
+                disabled={importStage === 'importing'}
+                className="text-gray-400 hover:text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <X size={18} />
               </button>
