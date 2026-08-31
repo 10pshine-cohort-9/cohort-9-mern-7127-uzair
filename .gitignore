@@ -2,8 +2,13 @@
 frontend/node_modules
 frontend/dist
 frontend/.env
-
+frontend/coverage/
+frontend/.nyc_output/
 
 #backend
 backend/node_modules
 backend/.env
+backend/coverage/
+backend/.nyc_output/
+backend/uploads/*
+!backend/uploads/.gitkeep

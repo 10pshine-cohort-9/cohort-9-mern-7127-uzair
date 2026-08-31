@@ -146,6 +146,7 @@ const Dashboard = (): JSX.Element => {
           </h1>
           {view === 'notes' && (
             <button
+              type="button"
               onClick={handleNewNote}
               className="bg-[#C0453A] text-white text-xs font-medium px-3 py-1.5 rounded-md hover:opacity-90 transition">
                 + New
@@ -187,6 +188,7 @@ const Dashboard = (): JSX.Element => {
 
       <div className={`${selectedNote || isCreating ? 'flex' : 'hidden'} md:flex flex-1 flex-col px-12 py-10`}>
         <button
+          type="button"
           onClick={() => {
             setSelectedNote(null)
             setIsCreating(false)
@@ -211,6 +213,7 @@ const Dashboard = (): JSX.Element => {
             />
 
             <button
+              type="button"
               onClick={createNewNote}
               className="mt-6 self-start bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
             >
@@ -231,12 +234,14 @@ const Dashboard = (): JSX.Element => {
               />
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={() => handleRestore(selectedNote)}
                   className="bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
                 >
                   Restore
                 </button>
                 <button
+                  type="button"
                   onClick={() => handlePermanentDelete(selectedNote)}
                   className="text-sm font-medium px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
                 >
@@ -263,12 +268,14 @@ const Dashboard = (): JSX.Element => {
 
               <div className="flex gap-3 mt-6">
                 <button
+                  type="button"
                   onClick={handleUpdate}
                   className="bg-[#C0453A] text-white text-sm font-medium px-4 py-2 rounded-md hover:opacity-90 transition"
                 >
                   Save
                 </button>
                 <button
+                  type="button"
                   onClick={handleDelete}
                   className="text-sm font-medium px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
                 >

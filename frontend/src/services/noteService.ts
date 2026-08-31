@@ -46,7 +46,12 @@ const createNote = async (title: string, content:string) : Promise<Note> => {
 
 const updateNote = async (id: string, title: string, content: string): Promise<Note> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
+
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+            throw new Error("Invalid note ID");
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${encodeURIComponent(id)}`, {
             method: 'PUT',
             credentials: 'include',
             headers: { 'Content-Type' : 'application/json' },
@@ -67,7 +72,12 @@ const updateNote = async (id: string, title: string, content: string): Promise<N
 
 const deleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}`, {
+
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+            throw new Error("Invalid note ID");
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${encodeURIComponent(id)}`, {
             method: 'DELETE',
             credentials: 'include'
         });
@@ -105,7 +115,12 @@ const getTrash = async () : Promise<Note[]> => {
 
 const restoreNote = async (id: string) : Promise<Note[]> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/restore`, {
+
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+            throw new Error("Invalid note ID");
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${encodeURIComponent(id)}/restore`, {
             method: 'PATCH',
             credentials: 'include'
         });
@@ -124,7 +139,12 @@ const restoreNote = async (id: string) : Promise<Note[]> => {
 
 const permanentlyDeleteNote = async (id: string) : Promise<DeleteNoteResponse> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${id}/permanent`, {
+
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+            throw new Error("Invalid note ID");
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/notes/${encodeURIComponent(id)}/permanent`, {
             method: 'DELETE',
             credentials: 'include'
         });

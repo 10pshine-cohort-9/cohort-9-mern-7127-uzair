@@ -2,8 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const logger  = require('../utils/logger');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const signup = async (req,res) => {
     try {
@@ -15,7 +15,19 @@ const signup = async (req,res) => {
             });
         }
 
-        const userExists = await User.findOne({email});
+        if (typeof email !== "string" || typeof name !== "string" || typeof password !== "string") {
+            return res.status(400).json({
+            message: "Invalid input format",
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters long",
+            });
+        }
+
+        const userExists = await User.findOne({email : String(email)});
 
         if(userExists){
             return res.status(400).json({
@@ -61,7 +73,13 @@ const login = async (req,res) => {
             });
         }
 
-        const user = await User.findOne({email});
+        if (typeof email !== "string" || typeof password !== "string") {
+            return res.status(400).json({
+                message: "Invalid input format"
+            });
+        }
+
+        const user = await User.findOne({email: String(email)});
         if(!user){
             return res.status(401).json({
                 message:"Invalid Credentials"
@@ -161,7 +179,11 @@ const updateProfilePicture = async (req, res) => {
       profilePicture: user.profilePicture
     });
   } catch (error) {
-    fs.unlink(path.join('uploads', req.file.filename), () => {});
+    fs.unlink(path.join('uploads', req.file.filename), (error) => {
+        if(error){
+            logger.error('Failed to delete uploaded image ', error.message);
+        }
+    });
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
